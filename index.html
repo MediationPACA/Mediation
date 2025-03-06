@@ -39,7 +39,7 @@
                         cache[cityName] = { lat: location.lat(), lng: location.lng() };
                         localStorage.setItem(GEOCODING_CACHE_KEY, JSON.stringify(cache));
                         console.log(`Géocodage réussi pour ${cityName}`);
-                        resolve({ lat: location.lat(), lng: location.lng() }); // Retourner les coordonnées sous forme d'objet
+                        resolve({ lat: location.lat(), lng: location.lng() });
                     } else {
                         console.error(`Erreur de géocodage pour ${cityName}: ${status}`);
                         reject(status);
@@ -59,10 +59,13 @@
             setInterval(updateData, 10000); // Mise à jour toutes les 10 secondes
         }
 
-        // Fonction pour appliquer un décalage léger
+        // Fonction pour appliquer un décalage léger basé sur une grille
         function applyOffset(position, index) {
-            const offset = 0.0288 * index; // Ajuster le facteur de décalage (0.0001 est un petit changement)
-            return new google.maps.LatLng(position.lat() + offset, position.lng() + offset);
+            const gridSize = 0.01; // Taille de la cellule de la grille en degrés
+            const latOffset = Math.floor(position.lat() / gridSize) * gridSize + (index % 5) * 0.0001; // Décalage en latitude
+            const lngOffset = Math.floor(position.lng() / gridSize) * gridSize + (index % 5) * 0.0001; // Décalage en longitude
+
+            return new google.maps.LatLng(latOffset, lngOffset);
         }
 
         async function updateData() {
@@ -112,6 +115,11 @@
                                     }
 
                                     try {
+                                        if (!address || address.trim() === "") {
+                                            debugInfo += `  Adresse vide ou incorrecte pour ${name}, skipping...\n`;
+                                            continue; // Skip this row if address is empty
+                                        }
+
                                         const location = await geocodeWithCache(geocoder, address); // Utilisation de l'adresse choisie
 
                                         let icon;
