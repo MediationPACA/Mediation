@@ -39,7 +39,7 @@
                         cache[cityName] = { lat: location.lat(), lng: location.lng() };
                         localStorage.setItem(GEOCODING_CACHE_KEY, JSON.stringify(cache));
                         console.log(`Géocodage réussi pour ${cityName}`);
-                        resolve(cache[cityName]);
+                        resolve({ lat: location.lat(), lng: location.lng() }); // Retourner les coordonnées sous forme d'objet
                     } else {
                         console.error(`Erreur de géocodage pour ${cityName}: ${status}`);
                         reject(status);
@@ -59,11 +59,18 @@
             setInterval(updateData, 10000); // Mise à jour toutes les 10 secondes
         }
 
+        // Fonction pour appliquer un décalage léger
+        function applyOffset(position, index) {
+            const offset = 0.0288 * index; // Ajuster le facteur de décalage (0.0001 est un petit changement)
+            return new google.maps.LatLng(position.lat() + offset, position.lng() + offset);
+        }
+
         async function updateData() {
             const geocoder = new google.maps.Geocoder();
             let debugInfo = "";
 
             const colorMap = {};
+            const markerPositions = {}; // Stocke les positions des marqueurs déjà créés pour éviter la superposition complète
 
             try {
                 const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=527237974&single=true&output=csv');
@@ -98,7 +105,6 @@
                                     // Déterminer la couleur en fonction du Numero
                                     let markerColor;
                                     if (!colorMap[Numero]) {
-                                        // Utilisation d'un hash basé sur le "Numero" pour générer une couleur unique
                                         markerColor = getColorFromNumero(Numero);
                                         colorMap[Numero] = markerColor;
                                     } else {
@@ -110,31 +116,37 @@
 
                                         let icon;
 
-                                        // Déterminer la forme de l'icône selon le type ("cityname" ou "address")
                                         if (address === cityName) {
-                                            // Marqueur pour "cityname" (Cercle avec un contour)
                                             icon = {
                                                 path: google.maps.SymbolPath.CIRCLE,
                                                 fillColor: markerColor,
-                                                fillOpacity: 0.8, // Opacité ajustée
-                                                strokeColor: 'black', // Contour noir
-                                                strokeWeight: 2, // Largeur du contour
-                                                scale: 12, // Augmenter la taille du cercle
+                                                fillOpacity: 0.8,
+                                                strokeColor: 'black',
+                                                strokeWeight: 2,
+                                                scale: 12,
                                             };
                                         } else {
-                                            // Marqueur pour "address" (Triangle - SVG personnalisé)
                                             icon = {
-                                                url: createTriangleSVG(markerColor), // Utilisation de l'URL du triangle SVG
-                                                scaledSize: new google.maps.Size(40, 40), // Taille augmentée du triangle
+                                                url: createTriangleSVG(markerColor),
+                                                scaledSize: new google.maps.Size(40, 40),
                                             };
                                         }
 
-                                        // Créer le marqueur avec l'icône personnalisée
+                                        // Appliquer un décalage pour les positions proches
+                                        let finalPosition = new google.maps.LatLng(location.lat, location.lng); // Crée une instance LatLng
+                                        if (markerPositions[finalPosition.lat() + "," + finalPosition.lng()]) {
+                                            // Appliquer un décalage léger basé sur un compteur d'index pour chaque marqueur à la même position
+                                            finalPosition = applyOffset(finalPosition, markerPositions[finalPosition.lat() + "," + finalPosition.lng()]);
+                                        }
+
+                                        // Stocker la position du marqueur pour éviter des superpositions complètes
+                                        markerPositions[finalPosition.lat() + "," + finalPosition.lng()] = (markerPositions[finalPosition.lat() + "," + finalPosition.lng()] || 0) + 1;
+
                                         const marker = new google.maps.Marker({
-                                            position: location,
+                                            position: finalPosition,
                                             map: map,
                                             title: `${name} (${espece} ${Numero} ${status})`,
-                                            icon: icon // Assignation de l'icône SVG
+                                            icon: icon
                                         });
 
                                         markers.push(marker);
