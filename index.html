@@ -95,6 +95,7 @@
                             const row = results.data[i];
                             if (row.length >= 14) {
                                 const name = row[0].trim();
+                                const repondu = row[1].trim();
                                 const espece = row[4].trim();
                                 const cityName = row[3].trim();
                                 const Numero = row[2].trim();
@@ -102,12 +103,12 @@
 
                                 const address = row[12].trim() !== "" ? row[12].trim() : cityName;
 
-                                debugInfo += `Ligne ${i}: ${name}, Status: "${status}", Ville: ${address}\n`;
+                                
 
                                 if (status.toLowerCase() === "en cours") {
                                     enCoursCount++;
-                                    debugInfo += `  Tentative de création de marqueur pour : ${name}\n`;
 
+                                
                                     let markerColor;
                                     if (!colorMap[Numero]) {
                                         markerColor = getColorFromNumero(Numero);
@@ -153,7 +154,7 @@
                                             markerPositions.set(positionKey, positionsForLocation);
 
                                             // Modification : Utilisation des valeurs souhaitées pour le rayon et le nombre de points
-                                            const RADIUS = 3000;  // Rayon du cercle en mètres
+                                            const RADIUS = 2000;  // Rayon du cercle en mètres
                                             const MAX_POINTS = 15; // Nombre maximal de points sur le cercle
 
                                             positionsForLocation.circlePoints = calculateCirclePoints(finalPosition, MAX_POINTS, RADIUS);
@@ -172,7 +173,7 @@
 
                                         markers.push(marker);
                                         markersCreatedCount++;
-                                        debugInfo += `  Marqueur créé pour : ${name} avec couleur: ${markerColor}\n`;
+                                        debugInfo += `  Marqueur créé pour : ${repondu}-----> ${espece} Numéro: ${Numero}     lieu découverte ${cityName}     adresse actuelle : ${address}\n`;
 
                                     } catch (geocodeStatus) {
                                         debugInfo += `  Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
