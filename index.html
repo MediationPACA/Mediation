@@ -86,7 +86,6 @@
                 Papa.parse(csv, {
                     complete: async function(results) {
                         console.log("Parsed CSV:", results.data);
-                        debugInfo += `Nombre total de lignes: ${results.data.length}\n`;
 
                         let enCoursCount = 0;
                         let markersCreatedCount = 0;
