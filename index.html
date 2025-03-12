@@ -15,6 +15,8 @@
     <div id="error-message"></div>
     <div id="debug-info"></div>
     <button id="switchMapButton">Afficher/Enlever la carte bénévoles</button>
+    <button id="switchMapButton2">Afficher/Enlever la carte Relai</button>
+
 
     <script>
         let map;
@@ -47,6 +49,9 @@
 
         const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=527237974&single=true&output=csv';
         const csvURL2 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSsfjj7eltK_SoO5hXkwQeZIp-Cufzc1DrcMUOyhrRnvgPi6w4cJB3fVCptVpiQG7RwB6EmsnqhZhQF/pub?gid=0&single=true&output=csv';
+        const csvURL3 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJbceq23ZJu_g-hTTFpIEEQbypFTT_dCABIIUcLcrUo9rilU0MmRG-NGFUCEJ_dw/pub?gid=1056850233&single=true&output=csv';
+
+        
         let currentCSV = csvURL1;
 
         function switchMap() {
@@ -58,9 +63,20 @@
             // Recharger les données avec le nouveau fichier
             updateData(currentCSV);
         }
+        function switchMapToCSV3() {
+            markers.forEach(marker => marker.setMap(null));
+            markers =[];
+        if (currentCSV !== csvURL3) {
+            currentCSV = csvURL3;
+        } else {
+            currentCSV = csvURL1;
+        }
+        updateData(currentCSV);
+        }
 
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("switchMapButton").addEventListener("click", switchMap);
+            document.getElementById("switchMapButton2").addEventListener("click", switchMapToCSV3);
         });
 
         function initMap() {
@@ -112,7 +128,20 @@
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
                     // Pour faciliter le debug, on réutilise le statut comme repondu
                     repondu: row[1]?.trim() || ''
+                
                 };
+            } else if (csvUrl === csvURL3) {
+                // Adaptez l'extraction en fonction de la structure de CSV3
+                return {
+                    name: row[0]?.trim() || '',
+                    status: row[8]?.trim(),
+                    cityName: row[2]?.trim() || '',
+                    espece: row[1]?.trim() || '',
+                    Numero: row[3]?.trim() || '',
+                    address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
+                    repondu: row[1]?.trim() || ''
+                };
+                
             }
             return {};
         }
@@ -200,7 +229,7 @@
                                         markersCreatedCount++;
                                         if (csvUrl === csvURL1) {
                                              debugInfo += `  ${repondu} -----> ${espece} Numéro : ${Numero}     lieu découverte: ${cityName}     adresse actuelle: ${address}\n`;
-                                        } else {  debugInfo += ` ${repondu}--->${name} --- ${espece}  --- ${cityName}       NUMERO  ${Numero}\n`;
+                                        } else {  debugInfo += ` ${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
                                         }
                                         } catch (geocodeStatus) {
                                         debugInfo += `  Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
