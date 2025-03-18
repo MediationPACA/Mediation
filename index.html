@@ -18,7 +18,6 @@
     <div id="error-message"></div>
     <div id="debug-info"></div>
 
-
     <script>
         let map;
         let markers = [];
@@ -52,27 +51,19 @@
         const csvURL2 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSsfjj7eltK_SoO5hXkwQeZIp-Cufzc1DrcMUOyhrRnvgPi6w4cJB3fVCptVpiQG7RwB6EmsnqhZhQF/pub?gid=0&single=true&output=csv';
         const csvURL3 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJbceq23ZJu_g-hTTFpIEEQbypFTT_dCABIIUcLcrUo9rilU0MmRG-NGFUCEJ_dw/pub?gid=1056850233&single=true&output=csv';
 
-        
         let currentCSV = csvURL1;
 
         function switchMap() {
-            // Effacer les marqueurs existants
             markers.forEach(marker => marker.setMap(null));
             markers = [];
-            // Changer l'URL du fichier CSV
             currentCSV = (currentCSV === csvURL1) ? csvURL2 : csvURL1;
-            // Recharger les données avec le nouveau fichier
             updateData(currentCSV);
         }
         function switchMapToCSV3() {
             markers.forEach(marker => marker.setMap(null));
-            markers =[];
-        if (currentCSV !== csvURL3) {
-            currentCSV = csvURL3;
-        } else {
-            currentCSV = csvURL1;
-        }
-        updateData(currentCSV);
+            markers = [];
+            currentCSV = (currentCSV !== csvURL3) ? csvURL3 : csvURL1;
+            updateData(currentCSV);
         }
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -117,22 +108,15 @@
             } else if (csvUrl === csvURL2) {
                 return {
                     name: row[0]?.trim() || '',
-                    // Pour la deuxième feuille, le statut se trouve en row[1] et sera converti
                     status: row[1]?.trim(),
-                    // Le cityName est en row[2]
                     cityName: row[2]?.trim() || '',
-                    // On considère que l'espece reste en row[3]
                     espece: row[3]?.trim() || '',
-                    // Le numéro est en row[4]
                     Numero: row[4]?.trim() || '',
-                    // L'adresse est extraite de row[12] si elle est présente, sinon on utilise cityName
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
-                    // Pour faciliter le debug, on réutilise le statut comme repondu
-                    repondu: row[1]?.trim() || ''
-                
+                    repondu: row[1]?.trim() || '',
+                    jourdispo: row[6]?.trim() || ''
                 };
             } else if (csvUrl === csvURL3) {
-                // Adaptez l'extraction en fonction de la structure de CSV3
                 return {
                     name: row[0]?.trim() || '',
                     status: row[8]?.trim(),
@@ -142,7 +126,6 @@
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
                     repondu: row[1]?.trim() || ''
                 };
-                
             }
             return {};
         }
@@ -161,7 +144,6 @@
                 Papa.parse(csv, {
                     complete: async function(results) {
                         console.log("Parsed CSV:", results.data);
-                        // Effacer les anciens marqueurs
                         markers.forEach(marker => marker.setMap(null));
                         markers = [];
                         let enCoursCount = 0;
@@ -170,9 +152,23 @@
                         for (let i = 1; i < results.data.length; i++) {
                             const row = results.data[i];
                             if (row.length >= minColumns) {
-                                const { name, repondu, Numero, cityName, espece, address, status } = extractData(row, csvUrl);
-                                // Pour CSV1, on teste le statut "En cours"
-                                // Pour CSV2, on teste le statut "Disponible"
+                                // Extraction des données
+                                let { name, repondu, Numero, cityName, espece, address, status } = extractData(row, csvUrl);
+                                const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
+                                
+                                // Pour CSV2 : vérifier le jour disponible contenu dans row[6]
+                                if (csvUrl === csvURL2) {
+                                    let joursDisponibles = row[6]?.trim() || '';
+                                    if (joursDisponibles) {
+                                        // Supposons que les jours soient séparés par des virgules (ex : "lundi,mardi")
+                                        let availableDays = joursDisponibles.split(',').map(day => day.trim().toLowerCase());
+                                        if (availableDays.includes(currentDay.toLowerCase())) {
+                                            status = "Disponible";
+                                        }
+                                    }
+                                }
+                                
+                                // Création du marqueur si le statut est "En cours" ou "Disponible"
                                 if (status === "En cours" || status === "Disponible") {
                                     enCoursCount++;
 
@@ -186,7 +182,7 @@
 
                                     try {
                                         if (!address || address.trim() === "") {
-                                            debugInfo += `  Adresse vide ou incorrecte pour ${name}, skipping...\n`;
+                                            debugInfo += `Adresse vide ou incorrecte pour ${name}, skipping...\n`;
                                             continue;
                                         }
                                         const location = await geocodeWithCache(geocoder, address);
@@ -228,12 +224,16 @@
                                         });
                                         markers.push(marker);
                                         markersCreatedCount++;
+
                                         if (csvUrl === csvURL1) {
-                                             debugInfo += `  ${repondu} -----> ${espece} Numéro : ${Numero}     lieu découverte: ${cityName}     adresse actuelle: ${address}\n`;
-                                        } else {  debugInfo += ` ${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
+                                            debugInfo += `${repondu} -----> ${espece} Numéro : ${Numero}     lieu découverte: ${cityName}     adresse actuelle: ${address}\n`;
+                                        } else if (csvUrl === csvURL2) {
+                                            debugInfo += `${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
+                                        } else {
+                                            debugInfo += `${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
                                         }
-                                        } catch (geocodeStatus) {
-                                        debugInfo += `  Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
+                                    } catch (geocodeStatus) {
+                                        debugInfo += `Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
                                         document.getElementById('error-message').textContent += `Erreur de géocodage pour ${address} : ${geocodeStatus}. `;
                                     }
                                 }
