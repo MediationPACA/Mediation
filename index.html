@@ -97,13 +97,15 @@
         function extractData(row, csvUrl) {
             if (csvUrl === csvURL1) {
                 return {
-                    name: row[0]?.trim() || '',
+                    name: row[9]?.trim() || '',
                     repondu: row[1]?.trim() || '',
                     Numero: row[2]?.trim() || '',
                     cityName: row[3]?.trim() || '',
                     espece: row[4]?.trim() || '',
                     address: (row[12]?.trim() && row[12].trim() !== "") ? row[12].trim() : row[3]?.trim() || '',
-                    status: row[13]?.trim() || ''
+                    status: row[13]?.trim() || '',
+                    cseil: row[0]?.trim() || '',
+                    
                 };
             } else if (csvUrl === csvURL2) {
                 return {
@@ -226,9 +228,9 @@
                                         markersCreatedCount++;
 
                                         if (csvUrl === csvURL1) {
-                                            debugInfo += `${repondu} -----> ${espece} Numéro : ${Numero}     lieu découverte: ${cityName}     adresse actuelle: ${address}\n`;
+                                            debugInfo += `${repondu} ---> ${espece} / ${name} / Numéro : ${Numero} /  lieu découverte: ${cityName}  /  adresse actuelle: ${address}\n`;
                                         } else if (csvUrl === csvURL2) {
-                                            debugInfo += `${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
+                                            debugInfo += `${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}  \n`;
                                         } else {
                                             debugInfo += `${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
                                         }
