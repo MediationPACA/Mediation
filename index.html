@@ -126,7 +126,8 @@
                     espece: row[1]?.trim() || '',
                     Numero: row[3]?.trim() || '',
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
-                    repondu: row[1]?.trim() || ''
+                    repondu: row[1]?.trim() || '',
+                    info: row[5]?.trim() || '',
                 };
             }
             return {};
@@ -155,7 +156,7 @@
                             const row = results.data[i];
                             if (row.length >= minColumns) {
                                 // Extraction des données
-                                let { name, repondu, Numero, cityName, espece, address, status, seil } = extractData(row, csvUrl);
+                                let { name, repondu, Numero, cityName, espece, address, status, seil, info } = extractData(row, csvUrl);
                                 const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
                                 
                                 // Pour CSV2 : vérifier le jour disponible contenu dans row[6]
@@ -232,7 +233,7 @@
                                         } else if (csvUrl === csvURL2) {
                                             debugInfo += `${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}  \n`;
                                         } else {
-                                            debugInfo += `${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}\n`;
+                                            debugInfo += `${repondu}--->${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero} | ${info}\n`;
                                         }
                                     } catch (geocodeStatus) {
                                         debugInfo += `Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
