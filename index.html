@@ -104,7 +104,7 @@
                     espece: row[4]?.trim() || '',
                     address: (row[12]?.trim() && row[12].trim() !== "") ? row[12].trim() : row[3]?.trim() || '',
                     status: row[13]?.trim() || '',
-                    cseil: row[0]?.trim() || '',
+                    seil: row[0]?.trim() || '',
                     
                 };
             } else if (csvUrl === csvURL2) {
@@ -155,7 +155,7 @@
                             const row = results.data[i];
                             if (row.length >= minColumns) {
                                 // Extraction des données
-                                let { name, repondu, Numero, cityName, espece, address, status } = extractData(row, csvUrl);
+                                let { name, repondu, Numero, cityName, espece, address, status, seil } = extractData(row, csvUrl);
                                 const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
                                 
                                 // Pour CSV2 : vérifier le jour disponible contenu dans row[6]
@@ -228,7 +228,7 @@
                                         markersCreatedCount++;
 
                                         if (csvUrl === csvURL1) {
-                                            debugInfo += `${repondu} ---> ${espece} / ${name} / Numéro : ${Numero} /  lieu découverte: ${cityName}  /  adresse actuelle: ${address}\n`;
+                                            debugInfo += `${repondu} ---> ${espece} | Conseil : ${name} | Numéro : ${Numero} |  lieu découverte : ${cityName}  |  adresse actuelle : ${address}  |  jour/heure appel : ${seil}\n`;
                                         } else if (csvUrl === csvURL2) {
                                             debugInfo += `${name} --- ${espece}  --- ${cityName}   NUMERO  ${Numero}  \n`;
                                         } else {
