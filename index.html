@@ -78,7 +78,7 @@
                 mapId: 'DEMO_MAP_ID'
             });
             updateData(currentCSV);
-            setInterval(() => updateData(currentCSV), 10000);
+            setInterval(() => updateData(currentCSV), 30000);
         }
 
         // Fonction pour calculer des points sur un cercle autour d'une position
@@ -116,7 +116,9 @@
                     Numero: row[4]?.trim() || '',
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
                     repondu: row[1]?.trim() || '',
-                    jourdispo: row[6]?.trim() || ''
+                    jourdispo: row[6]?.trim() || '',
+                    marqueur: row[7]?.trim() || ''
+
                 };
             } else if (csvUrl === csvURL3) {
                 return {
@@ -128,6 +130,7 @@
                     address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
                     repondu: row[1]?.trim() || '',
                     info: row[5]?.trim() || '',
+                    marqueur: row[7]?.trim() || ''
                 };
             }
             return {};
@@ -156,7 +159,7 @@
                             const row = results.data[i];
                             if (row.length >= minColumns) {
                                 // Extraction des données
-                                let { name, repondu, Numero, cityName, espece, address, status, seil, info } = extractData(row, csvUrl);
+                                let { name, repondu, Numero, cityName, espece, address, status, seil, info, marqueur } = extractData(row, csvUrl);
                                 const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
                                 
                                 // Pour CSV2 : vérifier le jour disponible contenu dans row[6]
@@ -176,11 +179,15 @@
                                     enCoursCount++;
 
                                     let markerColor;
-                                    if (!colorMap[Numero]) {
+                                    if (csvUrl === csvURL1) {
                                         markerColor = getColorFromNumero(Numero);
                                         colorMap[Numero] = markerColor;
-                                    } else {
-                                        markerColor = colorMap[Numero];
+                                    } else if (csvUrl === csvURL2) {
+                                        markerColor = getColorFromNumero(marqueur);
+                                        colorMap[marqueur] = markerColor;
+                                    } else if (csvUrl === csvURL3) {
+                                        markerColor = getColorFromNumero(marqueur);
+                                        colorMap[marqueur] = markerColor;
                                     }
 
                                     try {
@@ -222,7 +229,7 @@
                                         const marker = new google.maps.Marker({
                                             position: finalPosition,
                                             map: map,
-                                            title: `${name} (${espece} ${Numero} ${status})`,
+                                            title: `${name} (${espece} ${Numero} ${status} ${info} )`,
                                             icon: icon
                                         });
                                         markers.push(marker);
