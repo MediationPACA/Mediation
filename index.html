@@ -192,8 +192,7 @@
           <span style="font-size:30px;">📦</span> : Point Relais
           <span style="font-size:30px;">🩹</span> : Premiers soins
           <span style="font-size:30px;">🩻</span> : Radiographie
-        |
-        |
+          |||||
           <span style="font-size:30px;">🦤</span> : Goeland
           <span style="font-size:30px;">🦊</span> : Mammifères
           <span style="font-size:30px;">🦆</span> : Oiseaux
@@ -321,13 +320,12 @@
                     });
                     
                     // Ajout d'écouteurs pour afficher le titre au survol
-                    marker.addListener("mouseover", () => {
-                      infoWindow.setContent(marker.getTitle());
-                      infoWindow.open(map, marker);
+                    
+                    marker.addListener("click", () => {
+                    infoWindow.setContent(marker.getTitle());
+                    infoWindow.open(map, marker);
                     });
-                    marker.addListener("mouseout", () => {
-                      infoWindow.close();
-                    });
+
 
                     markers.push(marker);
                     markersCreatedCount++;
