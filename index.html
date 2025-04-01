@@ -151,7 +151,10 @@
           repondu: row[1]?.trim() || '',
           jourdispo: row[6]?.trim() || '',
           marqueur: row[3]?.trim() || '',
-          poste: row[7]?.trim() || ''
+          poste: row[7]?.trim() || '',
+          Emoj: row[7]?.trim() || '',
+          Emoj2: row[6]?.trim()|| '',
+          info: row[5]?.trim() ||'' 
         };
       } else if (csvUrl === csvURL3) {
         return {
@@ -192,7 +195,7 @@
           <span style="font-size:30px;">📦</span> : Point Relais
           <span style="font-size:30px;">🩹</span> : Premiers soins
           <span style="font-size:30px;">🩻</span> : Radiographie
-          |||||
+          <br>
           <span style="font-size:30px;">🦤</span> : Goeland
           <span style="font-size:30px;">🦊</span> : Mammifères
           <span style="font-size:30px;">🦆</span> : Oiseaux
@@ -315,14 +318,14 @@
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
-                      title: `${name} (${espece} ${Numero}  ${info} ${Emoj} ${Emoj2})`,
+                      title: `${name} (${espece} ${Numero} \n${info} ${Emoj} ${Emoj2}`,
                       icon: icon
                     });
                     
                     // Ajout d'écouteurs pour afficher le titre au survol
                     
                     marker.addListener("click", () => {
-                    infoWindow.setContent(marker.getTitle());
+                    infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero} <br>${info} <br>${Emoj} ${Emoj2}`);
                     infoWindow.open(map, marker);
                     });
 
