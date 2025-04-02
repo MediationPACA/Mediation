@@ -203,7 +203,6 @@
           jourdispo: row[6]?.trim() || '',
           marqueur: row[3]?.trim() || '',
           Emoj: row[7]?.trim() || '',
-          Emoj2: row[6]?.trim() || '',
           info: row[5]?.trim() || '' 
         };
       } else if (csvUrl === csvURL3) {
@@ -218,7 +217,9 @@
           info: row[5]?.trim() || '',
           marqueur: row[7]?.trim() || '',
           Emoj: row[12]?.trim() || '',
-          Emoj2: row[13]?.trim() || ''
+          Emoj2: row[13]?.trim() || '',
+          jourdispo: row[14]?.trim() || ''
+        
         };
       }
       return {};
@@ -384,7 +385,7 @@
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
-                      title: `${name} (${espece} ${Numero}\n${info} ${Emoj} ${Emoj2})`,
+                      title: `${name} (${espece} ${Numero} \n${jourdispo}\n${info} ${Emoj} ${Emoj2})`,
                       icon: icon
                     });
                     
@@ -398,7 +399,7 @@
                     marker.customIndex = markerCount;
                     
                     marker.addListener("click", () => {
-                      infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
+                      infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero}<br>${jourdispo}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
                       infoWindow.open(map, marker);
                     });
 
@@ -411,7 +412,7 @@
                     } else if (csvUrl === csvURL2) {
                       debugLine = `${name} --- ${cityName} NUMERO ${Numero} ${poste} ${espece}`;
                     } else {
-                      debugLine = `${repondu}--->${name} --- ${espece} --- ${cityName} NUMERO ${Numero} | ${info} ${Emoj} | ${Emoj2}`;
+                      debugLine = `${name} --- ${espece} --- ${cityName} NUMERO ${Numero} \nHoraires : ${jourdispo} \n| ${info} ${Emoj} | ${Emoj2}`;
                     }
                     // Ajout d'une ligne debug avec un id unique
                     debugInfoHTML += `<div id="debug-line-${markerCount}" data-index="${markerCount}">${debugLine}</div>\n`;
