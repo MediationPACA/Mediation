@@ -12,7 +12,7 @@
     #legend {
       margin-top: 10px;
       padding: 5px;
-      border: 0px solid black;
+      border: 1px solid black;
       width: fit-content;
       background-color: rgb(255, 255, 255);
       font-family: Arial, sans-serif;
@@ -32,9 +32,7 @@
   </div>
   <div id="error-message"></div>
   <div id="debug-info"></div>
-  <!-- Légende pour CSV2 -->
   
-
   <script>
     let map;
     let markers = [];
@@ -67,17 +65,40 @@
       });
     }
 
-    // Fonctions de création des icônes SVG pour CSV2
+    // Fonctions de création des icônes SVG
     function createPhoneSVG(color) {
-        return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">📞</text></svg>`;
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">📞</text></svg>`;
     }
     function createAmbulanceSVG(color) {
-    return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🚑</text></svg>`;
-}
-
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🚑</text></svg>`;
+    }
     function createCrossSVG(color) {
-        return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🩺</text></svg>`;
-}
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🩺</text></svg>`;
+    }
+    function createMammSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🦊</text></svg>`;
+    }
+    function createOisSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🦆</text></svg>`;
+    }
+    function createChiroSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🦇</text></svg>`;
+    }
+    function createDomSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🐶</text></svg>`;
+    }
+    function createreptSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🦎</text></svg>`;
+    }
+    function createtortSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🐢</text></svg>`;
+    }
+    function createserpSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🐍</text></svg>`;
+    }
+    function createamphiSVG(color) {
+      return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text x="5" y="30" font-size="30" fill="${color}">🐸</text></svg>`;
+    }
     // Fonction par défaut pour les autres cas
     function createTriangleSVG(color) {
       return `data:image/svg+xml;charset=UTF-8,<svg width="40" height="40" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><polygon points="15,5 25,25 5,25" fill="${color}" stroke="black" stroke-width="2" /></svg>`;
@@ -139,36 +160,37 @@
           address: (row[12]?.trim() && row[12].trim() !== "") ? row[12].trim() : row[3]?.trim() || '',
           status: row[13]?.trim() || '',
           seil: row[0]?.trim() || '',
+          Esp: row[14]?.trim() || '',
+          info: (row[12]?.trim() && row[12].trim() !== "") ? row[12].trim() : row[3]?.trim() || '',
         };
       } else if (csvUrl === csvURL2) {
         return {
           name: row[0]?.trim() || '',
-          status: row[1]?.trim(),
+          status: row[1]?.trim() || '',
           cityName: row[2]?.trim() || '',
           espece: row[3]?.trim() || '',
           Numero: row[4]?.trim() || '',
-          address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
+          address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : '',
           repondu: row[1]?.trim() || '',
           jourdispo: row[6]?.trim() || '',
           marqueur: row[3]?.trim() || '',
-          poste: row[7]?.trim() || '',
           Emoj: row[7]?.trim() || '',
-          Emoj2: row[6]?.trim()|| '',
-          info: row[5]?.trim() ||'' 
+          Emoj2: row[6]?.trim() || '',
+          info: row[5]?.trim() || '' 
         };
       } else if (csvUrl === csvURL3) {
         return {
           name: row[0]?.trim() || '',
-          status: row[8]?.trim(),
+          status: row[8]?.trim() || '',
           cityName: row[2]?.trim() || '',
           espece: row[1]?.trim() || '',
           Numero: row[3]?.trim() || '',
-          address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : row[2]?.trim() || '',
+          address: (row[2]?.trim() && row[2].trim() !== "") ? row[2].trim() : '',
           repondu: row[1]?.trim() || '',
           info: row[5]?.trim() || '',
           marqueur: row[7]?.trim() || '',
           Emoj: row[12]?.trim() || '',
-          Emoj2: row[13]?.trim() || '',
+          Emoj2: row[13]?.trim() || ''
         };
       }
       return {};
@@ -177,7 +199,20 @@
     function updateLegend(csvUrl) {
       const legend = document.getElementById("legend");
       const legendList = document.getElementById("legend-list");
-      if (csvUrl === csvURL2) {
+      if (csvUrl === csvURL1) {
+        legend.style.display = 'inline';
+        legendList.innerHTML = `
+          <span style="font-size:20px;">🦆</span> : Oiseaux
+          <span style="font-size:20px;">🦊</span> : Mammifères
+          <span style="font-size:20px;">🦇</span> : Chiroptères
+          <span style="font-size:20px;">🐍</span> : Serpents
+          <span style="font-size:20px;">🐢</span> : Tortues
+          <span style="font-size:20px;">🐶</span> : Domestiques
+          <span style="font-size:20px;">🐸</span> : Amphibiens
+          <span style="font-size:20px;">🦎</span> : Reptiles
+          <span style="font-size:20px;">▲</span> : Autre
+        `;
+      } else if (csvUrl === csvURL2) {
         legend.style.display = 'inline';
         legendList.innerHTML = `
           <span style="font-size:20px;">📞</span> : Médiation
@@ -185,7 +220,7 @@
           <span style="font-size:20px;">🩺</span> : Rapatrieur/Médiation/Soigneur
           <span style="font-size:20px;">▲</span> : Autre
         `;
-      } else if (csvUrl=== csvURL3) {
+      } else if (csvUrl === csvURL3) {
         legend.style.display = 'inline';
         legendList.innerHTML = `
           <span style="font-size:20px;">💉</span> : Euthanasie
@@ -195,8 +230,7 @@
           <span style="font-size:20px;">📦</span> : Point Relais
           <span style="font-size:20px;">🩹</span> : Premiers soins
           <span style="font-size:20px;">🩻</span> : Radiographie
-          <br>
-          <span style="font-size:20px;">🦤</span> : Goeland
+          <span style="font-size:20px;">🦤</span> : Goéland
           <span style="font-size:20px;">🦊</span> : Mammifères
           <span style="font-size:20px;">🦆</span> : Oiseaux
           <span style="font-size:20px;">🦔</span> : Petits mammifères
@@ -205,9 +239,10 @@
           <span style="font-size:20px;">🦎</span> : Reptiles
           <span style="font-size:20px;">🐢</span> : Tortues
           <span style="font-size:20px;">🦇</span> : Chiroptères
-          <span style="font-size:20px;">🚫🦤</span> : pas goeland
-          <span style="font-size:20px;">🐦</span> : Passereaux
-        `
+          <span style="font-size:20px;">🚫🦤</span> : Pas goéland
+        `;
+      } else {
+        legend.style.display = 'none';
       }
     }
 
@@ -234,15 +269,14 @@
             for (let i = 1; i < results.data.length; i++) {
               const row = results.data[i];
               if (row.length >= minColumns) {
-                let { name, repondu, Numero, cityName, espece, address, status, seil, info, marqueur, Emoj, Emoj2, poste } = extractData(row, csvUrl);
+                let { name, repondu, Numero, cityName, espece, address, status, seil, Esp, info, marqueur, Emoj, Emoj2, poste, jourdispo } = extractData(row, csvUrl);
                 const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
                 
                 if (csvUrl === csvURL2) {
-                  let joursDisponibles = row[6]?.trim() || '';
-                  if (joursDisponibles) {
-                    let availableDays = joursDisponibles.split(',')
-                      .map(day => day.trim().toLowerCase());
-                    if (availableDays.includes(currentDay.toLowerCase())) {
+                  let availableDays = jourdispo;
+                  if (availableDays) {
+                    let daysArray = availableDays.split(',').map(day => day.trim().toLowerCase());
+                    if (daysArray.includes(currentDay.toLowerCase())) {
                       status = "Disponible";
                     }
                   }
@@ -269,9 +303,32 @@
                     const location = await geocodeWithCache(geocoder, address);
                     let finalPosition = new google.maps.LatLng(location.lat, location.lng);
                     
-                    // Pour CSV2, sélection de l'icône SVG en fonction du contenu
-                    if (csvUrl === csvURL2) {
-                      let lowerMarqueur = marqueur.toLowerCase();
+                    if (csvUrl === csvURL1) {
+                      // Sélection de l'icône en fonction du champ Esp
+                      const lowerEsp = Esp.toLowerCase();
+                      if(lowerEsp.includes("oiseau")) {
+                        icon = { url: createOisSVG(markerColor) };
+                      } else if(lowerEsp.includes("mammifère") || lowerEsp.includes("mammifere")) {
+                        icon = { url: createMammSVG(markerColor) };
+                      } else if(lowerEsp.includes("chiroptère") || lowerEsp.includes("chiropter")) {
+                        icon = { url: createChiroSVG(markerColor) };
+                      } else if(lowerEsp.includes("serpent")) {
+                        icon = { url: createserpSVG(markerColor) };
+                      } else if(lowerEsp.includes("tortue")) {
+                        icon = { url: createtortSVG(markerColor) };
+                      } else if(lowerEsp.includes("domestique")) {
+                        icon = { url: createDomSVG(markerColor) };
+                      } else if(lowerEsp.includes("amphibien")) {
+                        icon = { url: createamphiSVG(markerColor) };
+                      } else if(lowerEsp.includes("reptile")) {
+                        icon = { url: createreptSVG(markerColor) };
+                      } else {
+                        icon = { url: createTriangleSVG(markerColor) };
+                      }
+                      icon.optimized = false;
+                    } else if (csvUrl === csvURL2) {
+                      // Pour CSV2 : icônes selon le contenu du champ marqueur
+                      const lowerMarqueur = marqueur.toLowerCase();
                       if(lowerMarqueur.includes("médiation") && !lowerMarqueur.includes("rapatrieur") && !lowerMarqueur.includes("soigneur")) {
                         icon = { url: createPhoneSVG(markerColor) };
                       } else if(lowerMarqueur.includes("rapatrieur") && !lowerMarqueur.includes("médiation") && !lowerMarqueur.includes("soigneur")) {
@@ -281,9 +338,9 @@
                       } else {
                         icon = { url: createTriangleSVG(markerColor) };
                       }
-                      // Pour CSV2, on désactive l'optimisation pour que le title soit exploitable
                       icon.optimized = false;
                     } else {
+                      // Pour CSV3
                       if (address === cityName) {
                         icon = {
                           path: google.maps.SymbolPath.CIRCLE,
@@ -318,17 +375,14 @@
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
-                      title: `${name} (${espece} ${Numero} \n${info} ${Emoj} ${Emoj2}`,
+                      title: `${name} (${espece} ${Numero}\n${info} ${Emoj} ${Emoj2})`,
                       icon: icon
                     });
                     
-                    // Ajout d'écouteurs pour afficher le titre au survol
-                    
                     marker.addListener("click", () => {
-                    infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero} <br>${info} <br>${Emoj} ${Emoj2}`);
-                    infoWindow.open(map, marker);
+                      infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
+                      infoWindow.open(map, marker);
                     });
-
 
                     markers.push(marker);
                     markersCreatedCount++;
@@ -338,7 +392,7 @@
                     } else if (csvUrl === csvURL2) {
                       debugInfo += `${name} --- ${cityName} NUMERO ${Numero} ${poste} ${espece}\n`;
                     } else {
-                      debugInfo += `${repondu}--->${name} --- ${espece} --- ${cityName} NUMERO ${Numero} \n | ${info} ${Emoj} | ${Emoj2}\n`;
+                      debugInfo += `${repondu}--->${name} --- ${espece} --- ${cityName} NUMERO ${Numero}\n | ${info} ${Emoj} | ${Emoj2}\n`;
                     }
                   } catch (geocodeStatus) {
                     debugInfo += `Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
