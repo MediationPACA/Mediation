@@ -282,6 +282,7 @@
       const geocoder = new google.maps.Geocoder();
       // On réinitialise le debug HTML
       let debugInfoHTML = "";
+      const markerPositions = new Map();
       // Réinitialisation des marqueurs et tableau debug
       markers.forEach(marker => marker.setMap(null));
       markers = [];
@@ -328,7 +329,20 @@
                     }
                     const location = await geocodeWithCache(geocoder, address);
                     let finalPosition = new google.maps.LatLng(location.lat, location.lng);
-                    
+                    let positionKey = finalPosition.lat() + "," + finalPosition.lng();
+                    let positionsForLocation;
+                     if (markerPositions.has(positionKey)) {
+    positionsForLocation = markerPositions.get(positionKey);
+    positionsForLocation.count++;
+                      } else {
+    positionsForLocation = { count: 0, circlePoints: [] };
+    markerPositions.set(positionKey, positionsForLocation);
+    const RADIUS = 2000;
+    const MAX_POINTS = 15;
+    positionsForLocation.circlePoints = calculateCirclePoints(finalPosition, MAX_POINTS, RADIUS);
+}
+finalPosition = positionsForLocation.circlePoints[positionsForLocation.count % positionsForLocation.circlePoints.length];
+
                     if (csvUrl === csvURL1) {
                       const lowerEsp = Esp.toLowerCase();
                       if(lowerEsp.includes("oiseau")) {
@@ -380,6 +394,7 @@
                         };
                       }
                     }
+                    
                     
                     // Création du marqueur
                     const marker = new google.maps.Marker({
