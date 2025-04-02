@@ -7,7 +7,7 @@
   <style>
     #map { height: 410px; width: 100%; }
     #error-message { color: red; }
-    #debug-info { margin-top: 10px; white-space: pre-wrap; }
+    #debug-info { margin-top: 10px; white-space: pre-wrap; font-family: Arial, sans-serif; }
     /* Style de la légende */
     #legend {
       margin-top: 10px;
@@ -19,13 +19,36 @@
     }
     #legend ul { list-style: none; padding: 0; margin: 0; }
     #legend li { margin-bottom: 4px; }
+    /* Style de la barre de recherche */
+    #search-container {
+      margin: 10px 0;
+      font-family: Arial, sans-serif;
+    }
+    #search-input {
+      padding: 5px;
+      width: 250px;
+      font-size: 14px;
+    }
+    #search-button {
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+    /* Style pour la ligne en surbrillance dans le debug */
+    .highlight {
+      background-color: yellow;
+    }
   </style>
 </head>
 <body>
   <div id="map"></div>
-  
-  <button id="switchMapButton">Afficher/Enlever la carte bénévoles</button>
+  <!-- Barre de recherche -->
+  <div id="search-container">
+    <button id="switchMapButton">Afficher/Enlever la carte bénévoles</button>
   <button id="switchMapButton2">Afficher/Enlever la carte Relai</button>
+  <input type="text" id="search-input" placeholder="Rechercher une commune ou un marqueur" />
+    <button id="search-button">Rechercher</button>
+   
+  
   <div id="legend">
       <strong>Légende :</strong>
       <ul id="legend-list"></ul>
@@ -38,9 +61,11 @@
     let markers = [];
     const GEOCODING_CACHE_KEY = 'geocodingCache';
     const GEOCODING_DELAY = 500; // délai en ms
-
-    // L'InfoWindow est créé dans initMap (pour CSV1/CSV3)
     let infoWindow;
+    // Variables pour la recherche
+    let searchResults = [];
+    let currentSearchIndex = 0;
+    let lastSearchTerm = "";
 
     async function geocodeWithCache(geocoder, cityName) {
       let cache = JSON.parse(localStorage.getItem(GEOCODING_CACHE_KEY) || '{}');
@@ -126,6 +151,7 @@
     document.addEventListener("DOMContentLoaded", function() {
       document.getElementById("switchMapButton").addEventListener("click", switchMap);
       document.getElementById("switchMapButton2").addEventListener("click", switchMapToCSV3);
+      document.getElementById("search-button").addEventListener("click", searchMarkers);
     });
 
     function initMap() {
@@ -163,7 +189,7 @@
           Esp: row[14]?.trim() || '',
           info: (row[12]?.trim() && row[12].trim() !== "") ? row[12].trim() : row[3]?.trim() || '',
           Emoj: row[16]?.trim() || '',
-          Emoj2: row[11]?.trim() || '',
+          Emoj2: row[11]?.trim() || ''
         };
       } else if (csvUrl === csvURL2) {
         return {
@@ -253,11 +279,12 @@
 
       const minColumns = (csvUrl === csvURL1) ? 14 : 5;
       const geocoder = new google.maps.Geocoder();
-      let debugInfo = "";
-      let markerPositions = new Map();
-      let enCoursCount = 0;
-      let markersCreatedCount = 0;
-
+      // On réinitialise le debug HTML
+      let debugInfoHTML = "";
+      // Réinitialisation des marqueurs et tableau debug
+      markers.forEach(marker => marker.setMap(null));
+      markers = [];
+      
       try {
         const response = await fetch(csvUrl);
         const csv = await response.text();
@@ -265,9 +292,7 @@
         Papa.parse(csv, {
           complete: async function(results) {
             console.log("Parsed CSV:", results.data);
-            markers.forEach(marker => marker.setMap(null));
-            markers = [];
-
+            let markerCount = 0;
             for (let i = 1; i < results.data.length; i++) {
               const row = results.data[i];
               if (row.length >= minColumns) {
@@ -285,7 +310,6 @@
                 }
                 
                 if (status === "En cours" || status === "Disponible") {
-                  enCoursCount++;
                   let markerColor;
                   let icon;
 
@@ -299,14 +323,12 @@
 
                   try {
                     if (!address || address.trim() === "") {
-                      debugInfo += `Adresse vide ou incorrecte pour ${name}, skipping...\n`;
                       continue;
                     }
                     const location = await geocodeWithCache(geocoder, address);
                     let finalPosition = new google.maps.LatLng(location.lat, location.lng);
                     
                     if (csvUrl === csvURL1) {
-                      // Sélection de l'icône en fonction du champ Esp
                       const lowerEsp = Esp.toLowerCase();
                       if(lowerEsp.includes("oiseau")) {
                         icon = { url: createOisSVG(markerColor) };
@@ -329,7 +351,6 @@
                       }
                       icon.optimized = false;
                     } else if (csvUrl === csvURL2) {
-                      // Pour CSV2 : icônes selon le contenu du champ marqueur
                       const lowerMarqueur = marqueur.toLowerCase();
                       if(lowerMarqueur.includes("médiation") && !lowerMarqueur.includes("rapatrieur") && !lowerMarqueur.includes("soigneur")) {
                         icon = { url: createPhoneSVG(markerColor) };
@@ -342,7 +363,6 @@
                       }
                       icon.optimized = false;
                     } else {
-                      // Pour CSV3
                       if (address === cityName) {
                         icon = {
                           path: google.maps.SymbolPath.CIRCLE,
@@ -360,20 +380,7 @@
                       }
                     }
                     
-                    let positionKey = finalPosition.lat() + "," + finalPosition.lng();
-                    let positionsForLocation;
-                    if (markerPositions.has(positionKey)) {
-                      positionsForLocation = markerPositions.get(positionKey);
-                      positionsForLocation.count++;
-                    } else {
-                      positionsForLocation = { count: 0, circlePoints: [] };
-                      markerPositions.set(positionKey, positionsForLocation);
-                      const RADIUS = 2000;
-                      const MAX_POINTS = 15;
-                      positionsForLocation.circlePoints = calculateCirclePoints(finalPosition, MAX_POINTS, RADIUS);
-                    }
-                    finalPosition = positionsForLocation.circlePoints[positionsForLocation.count % positionsForLocation.circlePoints.length];
-                    
+                    // Création du marqueur
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
@@ -381,38 +388,88 @@
                       icon: icon
                     });
                     
+                    // Ajout des données personnalisées pour la recherche
+                    marker.customData = {
+                      cityName: cityName.toLowerCase(),
+                      name: name.toLowerCase(),
+                      espece: espece.toLowerCase()
+                    };
+                    // On attribue également un index pour relier au debug
+                    marker.customIndex = markerCount;
+                    
                     marker.addListener("click", () => {
                       infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} ${Numero}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
                       infoWindow.open(map, marker);
                     });
 
                     markers.push(marker);
-                    markersCreatedCount++;
-
+                    
+                    // Préparation du texte de debug pour ce marqueur
+                    let debugLine = "";
                     if (csvUrl === csvURL1) {
-                      debugInfo += `${repondu} ---> ${espece} | Conseil : ${name} | Numéro : ${Numero} | lieu découverte : ${cityName} | adresse actuelle : ${address} | jour/heure appel : ${seil}\n`;
+                      debugLine = `${repondu} ---> ${espece} | Conseil : ${name} | Numéro : ${Numero} | lieu découverte : ${cityName} | adresse : ${address} | appel : ${seil}`;
                     } else if (csvUrl === csvURL2) {
-                      debugInfo += `${name} --- ${cityName} NUMERO ${Numero} ${poste} ${espece}\n`;
+                      debugLine = `${name} --- ${cityName} NUMERO ${Numero} ${poste} ${espece}`;
                     } else {
-                      debugInfo += `${repondu}--->${name} --- ${espece} --- ${cityName} NUMERO ${Numero}\n | ${info} ${Emoj} | ${Emoj2}\n`;
+                      debugLine = `${repondu}--->${name} --- ${espece} --- ${cityName} NUMERO ${Numero} | ${info} ${Emoj} | ${Emoj2}`;
                     }
+                    // Ajout d'une ligne debug avec un id unique
+                    debugInfoHTML += `<div id="debug-line-${markerCount}" data-index="${markerCount}">${debugLine}</div>\n`;
+                    markerCount++;
                   } catch (geocodeStatus) {
-                    debugInfo += `Erreur de géocodage pour ${address}: ${geocodeStatus}\n`;
-                    document.getElementById('error-message').textContent += `Erreur de géocodage pour ${address} : ${geocodeStatus}. `;
+                    console.error(`Erreur de géocodage pour ${address}: ${geocodeStatus}`);
                   }
                 }
-              } else {
-                debugInfo += `Ligne ${i} avec moins de ${minColumns} colonnes\n`;
               }
             }
-            debugInfo += `Nombre d'éléments "En cours" : ${enCoursCount}\n`;
-            debugInfo += `Nombre de marqueurs créés : ${markersCreatedCount}\n`;
-            document.getElementById('debug-info').textContent = debugInfo;
+            document.getElementById('debug-info').innerHTML = debugInfoHTML;
           }
         });
       } catch (error) {
         console.error('Erreur:', error);
         document.getElementById('error-message').textContent = "Erreur lors de la récupération des données. Vérifiez la console.";
+      }
+    }
+
+    // Fonction de recherche qui permet de cycler sur les marqueurs correspondant
+    function searchMarkers() {
+      const searchTerm = document.getElementById("search-input").value.trim().toLowerCase();
+      if (!searchTerm) return;
+      
+      // Si le terme de recherche a changé, on reconstruit le tableau de résultats
+      if (searchTerm !== lastSearchTerm) {
+        searchResults = markers.filter(marker => {
+          return marker.customData.cityName.includes(searchTerm) ||
+                 marker.customData.name.includes(searchTerm) ||
+                 marker.customData.espece.includes(searchTerm);
+        });
+        currentSearchIndex = 0;
+        lastSearchTerm = searchTerm;
+      }
+      
+      if (searchResults.length === 0) {
+        alert("Aucun marqueur correspondant n'a été trouvé.");
+        return;
+      }
+      
+      // Sélection du marqueur suivant dans le tableau de résultats
+      const markerFound = searchResults[currentSearchIndex % searchResults.length];
+      currentSearchIndex++;
+      
+      map.setCenter(markerFound.getPosition());
+      map.setZoom(10);
+      infoWindow.setContent(markerFound.getTitle());
+      infoWindow.open(map, markerFound);
+      
+      // Mise en surbrillance dans le debug-info
+      // D'abord, on retire la classe 'highlight' de toutes les lignes
+      const debugLines = document.querySelectorAll("#debug-info > div");
+      debugLines.forEach(line => line.classList.remove("highlight"));
+      // On ajoute la classe 'highlight' à la ligne correspondant au marqueur trouvé
+      const debugLine = document.getElementById(`debug-line-${markerFound.customIndex}`);
+      if (debugLine) {
+        debugLine.classList.add("highlight");
+        
       }
     }
 
