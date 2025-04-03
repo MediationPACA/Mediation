@@ -62,7 +62,7 @@
     let map;
     let markers = [];
     const GEOCODING_CACHE_KEY = 'geocodingCache';
-    const GEOCODING_DELAY = 500; // délai en ms
+    const GEOCODING_DELAY = 5; // délai en ms
     let infoWindow;
     // Variables pour la recherche
     let searchResults = [];
@@ -176,7 +176,7 @@
       });
       infoWindow = new google.maps.InfoWindow();
       updateData(currentCSV);
-      setInterval(() => updateData(currentCSV), 30000);
+      setInterval(() => updateData(currentCSV), 120000);
     }
 
     function calculateCirclePoints(center, maxPoints, radius) {
