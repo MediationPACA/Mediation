@@ -47,6 +47,8 @@
   <button id="switchMapButton2">Afficher/Enlever la carte Relai</button>
   <input type="text" id="search-input" placeholder="Rechercher une commune ou un marqueur" />
     <button id="search-button">Rechercher</button>
+    <button id="switchMapButtonUrgence">carte Urgence (Ajouter/Enlever tous les bénévoles )</button>
+
    
   
   <div id="legend">
@@ -66,6 +68,8 @@
     let searchResults = [];
     let currentSearchIndex = 0;
     let lastSearchTerm = "";
+    let urgentMode = false;
+
 
     async function geocodeWithCache(geocoder, cityName) {
       let cache = JSON.parse(localStorage.getItem(GEOCODING_CACHE_KEY) || '{}');
@@ -126,7 +130,7 @@
     }
     // Fonction par défaut pour les autres cas
     function createTriangleSVG(color) {
-      return `data:image/svg+xml;charset=UTF-8,<svg width="40" height="40" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><polygon points="15,5 25,25 5,25" fill="${color}" stroke="black" stroke-width="2" /></svg>`;
+      return `data:image/svg+xml;charset=UTF-8,<svg width="20" height="20" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><polygon points="15,5 25,25 5,25" fill="${color}" stroke="black" stroke-width="2" /></svg>`;
     }
 
     const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=527237974&single=true&output=csv';
@@ -151,8 +155,19 @@
     document.addEventListener("DOMContentLoaded", function() {
       document.getElementById("switchMapButton").addEventListener("click", switchMap);
       document.getElementById("switchMapButton2").addEventListener("click", switchMapToCSV3);
+      document.getElementById("switchMapButtonUrgence").addEventListener("click", switchMapUrgence);
       document.getElementById("search-button").addEventListener("click", searchMarkers);
     });
+    function switchMapUrgence() {
+  // Si le mode urgence est déjà activé, on le désactive et on revient à la carte CSV1
+  urgentMode = !urgentMode;
+  markers.forEach(marker => marker.setMap(null));
+  markers = [];
+  // Pour le mode urgence, on charge toujours le CSV2, mais en ignorant le statut
+  currentCSV = csvURL2;
+  updateData(currentCSV);
+}
+
 
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
@@ -311,7 +326,7 @@
                   }
                 }
                 
-                if (status === "En cours" || status === "Disponible") {
+                if ((csvUrl === csvURL2 && urgentMode) || status === "En cours" || status === "Disponible") {
                   let markerColor;
                   let icon;
 
@@ -366,18 +381,21 @@ finalPosition = positionsForLocation.circlePoints[positionsForLocation.count % p
                       }
                       icon.optimized = false;
                     } else if (csvUrl === csvURL2) {
-                      const lowerMarqueur = marqueur.toLowerCase();
-                      if(lowerMarqueur.includes("médiation") && !lowerMarqueur.includes("rapatrieur") && !lowerMarqueur.includes("soigneur")) {
-                        icon = { url: createPhoneSVG(markerColor) };
-                      } else if(lowerMarqueur.includes("rapatrieur") && !lowerMarqueur.includes("médiation") && !lowerMarqueur.includes("soigneur")) {
-                        icon = { url: createAmbulanceSVG(markerColor) };
-                      } else if(lowerMarqueur.includes("rapatrieur") || lowerMarqueur.includes("médiation") || lowerMarqueur.includes("soigneur")) {
-                        icon = { url: createCrossSVG(markerColor) };
-                      } else {
-                        icon = { url: createTriangleSVG(markerColor) };
-                      }
-                      icon.optimized = false;
-                    } else {
+  const lowerMarqueur = marqueur.toLowerCase();
+  if (lowerMarqueur.includes("soigneur")) {
+    // Priorité : soigneur => icône cross
+    icon = { url: createCrossSVG(markerColor) };
+  } else if (lowerMarqueur.includes("rapatrieur")) {
+    // rapatrieur (même s'il y a aussi médiation) => icône ambulance
+    icon = { url: createAmbulanceSVG(markerColor) };
+  } else if (lowerMarqueur.includes("médiation")) {
+    // uniquement médiation => icône téléphone
+    icon = { url: createPhoneSVG(markerColor) };
+  } else {
+    icon = { url: createTriangleSVG(markerColor) };
+  }
+  icon.optimized = false;
+} else {
                       if (address === cityName) {
                         icon = {
                           path: google.maps.SymbolPath.CIRCLE,
@@ -400,7 +418,7 @@ finalPosition = positionsForLocation.circlePoints[positionsForLocation.count % p
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
-                      title: `${name} (${espece} ${Numero} \n${jourdispo}\n${info} ${Emoj} ${Emoj2})`,
+                      title: `${name} ${espece} ${Numero} \n${jourdispo}\n${info} ${Emoj} ${Emoj2}`,
                       icon: icon
                     });
                     
