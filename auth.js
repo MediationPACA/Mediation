@@ -1,23 +1,22 @@
-// Définition des configurations pour chaque espace
+// configurations chaque espace
 const authConfig = {
     mediation: {
-        password: "1", // À remplacer par le vrai mot de passe
-        storageKey: "authMediation",
-        redirect: "mediation.html"
+        password: "1", // À remplacer 
+        redirect: "Mediation.html"
     },
     diffusion: {
-        password: "1", // À remplacer par le vrai mot de passe
+        password: "1", // À remplacer 
         storageKey: "authDiffusion",
         redirect: "diffusion.html"
     },
     direction: {
-        password: "1", // À remplacer par le vrai mot de passe
+        password: "1", // À remplacer 
         storageKey: "authDirection",
         redirect: "direction.html"
     }
 };
 
-// Fonction pour vérifier les identifiants selon l'espace sélectionné
+// identifiants selon l'espace sélectionné
 function verifier() {
     const passwordInput = document.getElementById("password").value;
     const space = document.getElementById("space").value;
@@ -25,11 +24,11 @@ function verifier() {
     if (authConfig.hasOwnProperty(space)) {
         const config = authConfig[space];
 
-        // Vérification du mot de passe
+        // Vérification du mp
         if (passwordInput === config.password) {
             // Stockage du mot de passe encodé en base64 dans le localStorage
             localStorage.setItem(config.storageKey, btoa(passwordInput));
-            // Redirection vers la page dédiée à l'espace
+            // Redirection page dédiée à l'espace
             window.location.href = config.redirect;
         } else {
             alert("Mot de passe incorrect pour l'espace " + space + " !");
@@ -39,7 +38,7 @@ function verifier() {
     }
 }
 
-// Optionnel : fonction pour vérifier l'accès (à appeler dans les pages protégées)
+
 function checkAccess(space) {
     if (authConfig.hasOwnProperty(space)) {
         const config = authConfig[space];
@@ -50,7 +49,7 @@ function checkAccess(space) {
     }
 }
 
-// Fonction de déconnexion générique pour supprimer l'authentification d'un espace donné
+// déconnexion 
 function deconnexion(space) {
     if (authConfig.hasOwnProperty(space)) {
         localStorage.removeItem(authConfig[space].storageKey);

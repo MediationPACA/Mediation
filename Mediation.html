@@ -8,17 +8,17 @@
  
   <style>
     body.noscroll {
-        overflow: hidden; /* Désactive le défilement */
+        overflow: hidden; 
     }
 </style>
   <script src="auth.js"></script>
   <script>
     window.onbeforeunload = function() {
-        return undefined; // Évite le pop-up de confirmation
+        return undefined; 
     };
 
     window.onload = function() {
-        window.scrollTo(0, 0); // Reste en haut de la page
+        window.scrollTo(0, 0); 
     };
 </script>
   <script>
@@ -29,10 +29,10 @@
     }
   </script>
   
-  <!-- Inclusion des bibliothèques -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
   <style>
-    /* Vos styles CSS */
+    /* CSS */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: Arial, sans-serif; text-align: center; background-color: #bfecbb; }
     .header { position: relative; width: 100%; height: 310px; background: url('marty.png') no-repeat center; background-size: cover; display: flex; flex-direction: column; justify-content: center; align-items: center; color: black; padding: 20px; }
@@ -61,7 +61,7 @@
             justify-content: space-between;
             align-items: none;
             padding: 10px;
-            background-color: #7fa77b; /* Couleur de fond de la barre de navigation */
+            background-color: #7fa77b;
         }
         .logout-button {
   position: absolute;
@@ -99,7 +99,7 @@
   font-weight: bold;
 }
 .sites:hover {
-            background-color: #c82333; /* Couleur plus foncée au survol */
+            background-color: #c82333; 
         }
   </style>
 </head>
@@ -115,28 +115,21 @@
       <strong>DUMBO</strong>
     </p>
     <p class="phone">0483650279</p>
-    <button class="logout-button" onclick="deconnexion()">Déconnexion</button>
   </div>
   <p class="page">Médiation</p>
-    <button class= "sites" onclick="window.location.href='sites.html'"> Sites Utiles </button>
-    <button class= "sites" onclick="window.location.href='DOC.html'"> Doc Véto/bénévoles </button>
 
 
   <div id="map"></div>
 
-  <!-- Barre de recherche et légende -->
+  <!-- recherche et légende -->
   <div id="search-container">
-    <button id="switchMapButton">Afficher/Enlever la carte bénévoles</button>
-    <button id="switchMapButton2">Afficher/Enlever la carte Relai</button>
+    
+    
     <input type="text" id="search-input" placeholder="Rechercher un marqueur" />
     <button id="search-button">Rechercher</button>
     <input type="text" id="manualSearchInput" placeholder="Rechercher une ville ou une adresse">
 <button id="manualSearchButton">Rechercher</button>
-
-    <button id="switchMapButtonUrgence">Carte Urgence (Ajouter/Enlever tous les bénévoles)</button>
-  </br><a class="link1" href="https://www.ornitho.com/" target="_blank">Identification oiseau IA</a>
-    <a class="link1" href="https://www.oiseaux.net/identifier/accueil.html" target="_blank">Aide identification</a>
-    <a class="link1" href="https://www.oisillon.net/apprendre-reconnaitre-oiseaux-de-jardin" target="_blank">Aide identification 2</a>
+ <p class="link"><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=1699587869&single=true&output=csv" target="_blank">CHIRO csv</a></p>
     <div id="legend">
       </br> <strong>Légende :</strong>
       <ul id="legend-list"></ul>
@@ -150,20 +143,9 @@
     
   </div>
 
-  <!-- Iframes divers -->
-  <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdYmy3eCjHTysUDNlxZLb3flDGO8rR5OBlYthfuRYx3zOSZNA/viewform?embedded=true" width="640" height="800" frameborder="0" marginheight="0" marginwidth="0">Chargement…</iframe>
-  <p class="link"><a href="https://docs.google.com/spreadsheets/d/1WJ5bBVULuvcCbTtekb4jAbY58cHOA0YmbLiuPDiQZ64/edit?resourcekey=&gid=527237974#gid=527237974" target="_blank">Médiation</a></p>
 
-  
-  <iframe src="https://docs.google.com/spreadsheets/d/1WJ5bBVULuvcCbTtekb4jAbY58cHOA0YmbLiuPDiQZ64/edit" width="100%" height="1000"></iframe>
-  <p class="link"><a href="https://docs.google.com/spreadsheets/d/1PSjpRvCEZI1pqhebKzsGvdVUrOHlzc1d/edit?gid=1056850233#gid=1056850233" target="_blank">Véto83</a></p>
+ 
 
-  <p class="link"><a href="https://docs.google.com/spreadsheets/d/1SjBmjncMrk6WSFh-0KUzp8Rr55EZqYpcsL2PetWwskU/edit?gid=0#gid=0" target="_blank">Bénévoles</a></p>
-  <iframe src="https://drive.google.com/file/d/1O53vgIu8fT0flb4bh12cCP7a_gxP2fxq/preview" width="800" height="1000"></iframe>
-  <iframe src="https://docs.google.com/document/d/1rtHrRyi4FYOWsCzVXqs7j0Zb_JFObA4NflO_UyifUnw/edit?" width="800px" height="1000"></iframe>
-  <iframe src="https://www.google.com/maps/d/u/0/embed?mid=1-tf56PIvRYV-y_Zvg2n36OfwC4Sv-MY&femb=1&ll=43.4647048189242%2C6.29414399999999&z=9" width="800" height="800"></iframe>
-
-  <!-- Votre code JavaScript principal -->
   <script>
     let map;
     let markers = [];
@@ -176,12 +158,11 @@
     let urgentMode = false;
     
 
-    const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=527237974&single=true&output=csv';
-    const csvURL2 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSsfjj7eltK_SoO5hXkwQeZIp-Cufzc1DrcMUOyhrRnvgPi6w4cJB3fVCptVpiQG7RwB6EmsnqhZhQF/pub?gid=0&single=true&output=csv';
-    const csvURL3 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRJbceq23ZJu_g-hTTFpIEEQbypFTT_dCABIIUcLcrUo9rilU0MmRG-NGFUCEJ_dw/pub?gid=1056850233&single=true&output=csv';
+    const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=1699587869&single=true&output=csv';
+    const csvURL2 = '';
     let currentCSV = csvURL1;
 
-    // Fonctions de création des icônes SVG (les fonctions createPhoneSVG, createAmbulanceSVG, etc.)
+    // icônes SVG
     function createPhoneSVG(color) { return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="5" y="30" font-size="30" fill="${color}">📞</text></svg>`; }
     function createAmbulanceSVG(color) { return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="5" y="30" font-size="30" fill="${color}">🚑</text></svg>`; }
     function createCrossSVG(color) { return `data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><text x="5" y="30" font-size="30" fill="${color}">🩺</text></svg>`; }
@@ -197,7 +178,7 @@
     function createInterventionSVG(color) {  return `data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48"><text x="1" y="42" font-size="40" fill="${color}">⭕</text> </svg>`;
 }
 
-    // Fonction de géocodage avec cache
+    // géocodage avec cache
     async function geocodeWithCache(geocoder, cityName) {
       let cache = JSON.parse(localStorage.getItem(GEOCODING_CACHE_KEY) || '{}');
       if (cache[cityName]) {
@@ -221,7 +202,7 @@
       });
     }
 
-    // Fonctions pour extraire les données CSV selon l'URL
+    //  données CSV selon l'URL
     function extractData(row, csvUrl) {
       if (csvUrl === csvURL1) {
         return {
@@ -239,40 +220,12 @@
           Emoj2: row[11]?.trim() || '',
           jourdispo: row[15]?.trim() ||''
         };
-      } else if (csvUrl === csvURL2) {
-        return {
-          name: row[0]?.trim() || '',
-          status: row[1]?.trim() || '',
-          cityName: row[2]?.trim() || '',
-          espece: row[3]?.trim() || '',
-          Numero: row[4]?.trim() || '',
-          address: (row[2]?.trim() ? row[2].trim() : '') || '',
-          repondu: row[1]?.trim() || '',
-          jourdispo: row[6]?.trim() || '',
-          marqueur: row[3]?.trim() || '',
-          Emoj: row[7]?.trim() || '',
-          info: row[5]?.trim() || '' 
-        };
-      } else if (csvUrl === csvURL3) {
-        return {
-          name: row[0]?.trim() || '',
-          status: row[8]?.trim() || '',
-          cityName: row[2]?.trim() || '',
-          espece: row[1]?.trim() || '',
-          Numero: row[3]?.trim() || '',
-          address: (row[2]?.trim() ? row[2].trim() : '') || '',
-          repondu: row[1]?.trim() || '',
-          info: row[5]?.trim() || '',
-          marqueur: row[7]?.trim() || '',
-          Emoj: row[12]?.trim() || '',
-          Emoj2: row[13]?.trim() || '',
-          jourdispo: row[14]?.trim() || ''
-        };
+      
       }
       return {};
     }
 
-    // Mise à jour de la légende en fonction du CSV utilisé
+    // légende en fonction du CSV 
     function updateLegend(csvUrl) {
       const legend = document.getElementById("legend");
       const legendList = document.getElementById("legend-list");
@@ -290,41 +243,14 @@
           <span style="font-size:20px;">🦆+⭕:</span> Intervention
           <span style="font-size:20px;">▲:</span> Autre
         `;
-      } else if (csvUrl === csvURL2) {
-        legend.style.display = 'inline';
-        legendList.innerHTML = `
-          <span style="font-size:20px;">📞:</span> : Médiation
-          <span style="font-size:20px;">🚑:</span> : Rapatrieur
-          <span style="font-size:20px;">🩺:</span> : Rapatrieur/Médiation/Soigneur
-          <span style="font-size:20px;">▲:</span> : Autre
-        `;
-      } else if (csvUrl === csvURL3) {
-        legend.style.display = 'inline';
-        legendList.innerHTML = `
-          <span style="font-size:20px;">💉:</span> Euthanasie
-          <span style="font-size:20px;">🩺:</span> Diagnostique
-          <span style="font-size:20px;">🍼:</span> Nursing
-          <span style="font-size:20px;">🛠️:</span> Opération
-          <span style="font-size:20px;">📦:</span> Point Relais
-          <span style="font-size:20px;">🩹:</span> Premiers soins
-          <span style="font-size:20px;">🩻:</span> Radiographie
-          </br> <span style="font-size:20px;">🦤:</span> Goéland
-          <span style="font-size:20px;">🦊:</span> Mammifères
-          <span style="font-size:20px;">🦆:</span> Oiseaux
-          <span style="font-size:20px;">🦔:</span> Petits mammifères
-          <span style="font-size:20px;">🕊️:</span> Pigeons Tourterelles
-          <span style="font-size:20px;">🦅:</span> Rapaces
-          <span style="font-size:20px;">🦎:</span> Reptiles
-          <span style="font-size:20px;">🐢:</span> Tortues
-          <span style="font-size:20px;">🦇:</span> Chiroptères
-          <span style="font-size:20px;">🚫🦤:</span> Pas goéland
-        `;
+      
+      
       } else {
         legend.style.display = 'none';
       }
     }
 
-    // Fonctions de changement de CSV / affichage de la carte
+    // changement CSV / affichage carte
     function switchMap() {
       markers.forEach(marker => marker.setMap(null));
       markers = [];
@@ -348,7 +274,7 @@
 
 
     
-  // Attendre que le DOM soit chargé une seule fois
+  
   document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("switchMapButton").addEventListener("click", switchMap);
     document.getElementById("switchMapButton2").addEventListener("click", switchMapToCSV3);
@@ -356,7 +282,7 @@
     document.getElementById("search-button").addEventListener("click", searchMarkers);
     document.getElementById("manualSearchButton").addEventListener("click", manualSearch);
 
-    // ✅ L'écouteur pour la touche "Entrée"
+    // "Entrée"
     const input = document.getElementById("manualSearchInput");
     input.addEventListener("keydown", function(e) {
       if (e.key === "Enter") {
@@ -372,7 +298,7 @@
     });
 
 
-    // Fonction d'initialisation de la carte
+    // initialisation carte
     function initMap() {
       map = new google.maps.Map(document.getElementById('map'), {
         zoom: 8.8,
@@ -383,7 +309,7 @@
       setInterval(() => updateData(currentCSV), 120000);
     }
 
-    // Calcul des points pour éviter le chevauchement des marqueurs
+    // éviter le chevauchement des marqueurs
     function calculateCirclePoints(center, maxPoints, radius) {
       const points = [];
       for (let i = 0; i < maxPoints; i++) {
@@ -395,7 +321,7 @@
       return points;
     }
 
-    // Mise à jour des données (lecture du CSV et ajout des marqueurs)
+    // lecture du CSV et ajout des marqueurs
     async function updateData(csvUrl) {
       updateLegend(csvUrl);
       const minColumns = (csvUrl === csvURL1) ? 14 : 5;
@@ -417,15 +343,7 @@
                 let { name, repondu, Numero, cityName, espece, address, status, seil, Esp, info, marqueur, Emoj, Emoj2, poste, jourdispo } = extractData(row, csvUrl);
                 const currentDay = new Date().toLocaleString('fr-FR', { weekday: 'long' });
                 
-                if (csvUrl === csvURL2) {
-                  let availableDays = jourdispo;
-                  if (availableDays) {
-                    let daysArray = availableDays.split(',').map(day => day.trim().toLowerCase());
-                    if (daysArray.includes(currentDay.toLowerCase())) {
-                      status = "Disponible";
-                    }
-                  }
-                }
+               
                 
                 if ((csvUrl === csvURL2 && urgentMode) || 
     (csvUrl === csvURL1 && (status === "En cours" || status === "Intervention")) || 
@@ -478,17 +396,7 @@
                         icon = { url: createTriangleSVG(markerColor) };
                       }
                       icon.optimized = false;
-                    } else if (csvUrl === csvURL2) {
-                      const lowerMarqueur = marqueur.toLowerCase();
-                      if (lowerMarqueur.includes("soigneur")) {
-                        icon = { url: createCrossSVG(markerColor) };
-                      } else if (lowerMarqueur.includes("rapatrieur")) {
-                        icon = { url: createAmbulanceSVG(markerColor) };
-                      } else if (lowerMarqueur.includes("médiation")) {
-                        icon = { url: createPhoneSVG(markerColor) };
-                      } else {
-                        icon = { url: createTriangleSVG(markerColor) };
-                      }
+                    
                       icon.optimized = false;
                     } else {
                       if (address === cityName) {
@@ -549,12 +457,8 @@ if (csvUrl === csvURL1 && status.trim().toLowerCase() === "intervention") {
                     markers.push(marker);
                     let debugLine = "";
                     if (csvUrl === csvURL1) {
-                      debugLine = `${repondu} ---> ${espece} | Conseil : ${name} | Numéro : ${Numero} | lieu découverte : ${cityName} | adresse : ${address} | appel : ${seil}`;
-                    } else if (csvUrl === csvURL2) {
-                      debugLine = `${name} --- ${cityName} NUMERO ${Numero} ${poste} ${espece}`;
-                    } else {
-                      debugLine = `${name} --- ${espece} --- ${cityName} NUMERO ${Numero} \nHoraires : ${jourdispo} \n| ${info} ${Emoj} | ${Emoj2}`;
-                    }
+                      debugLine = `${repondu} ---> ${espece} | Conseil : ${name} | Numéro : ${Numero} | lieu découverte : ${cityName}  | appel : ${seil}`;
+                    } 
                     debugInfoHTML += `<div id="debug-line-${markerCount}" data-index="${markerCount}">${debugLine}</div>\n`;
                     markerCount++;
                   } catch (geocodeStatus) {
@@ -602,7 +506,7 @@ if (csvUrl === csvURL1 && status.trim().toLowerCase() === "intervention") {
         debugLine.classList.add("highlight");
       }
     }
-// Rechercher manuellement une ville/adresse saisie par l'utilisateur
+// Rechercher ville/adresse 
 async function manualSearch() {
   const input = document.getElementById("manualSearchInput");
   const query = input.value.trim();
@@ -619,7 +523,7 @@ async function manualSearch() {
     map.setCenter(latLng);
     map.setZoom(12);
 
-    // Ajoute un marqueur temporaire
+    // marqueur temporaire
     const marker = new google.maps.Marker({
       position: latLng,
       map: map,
@@ -645,7 +549,7 @@ async function manualSearch() {
   }
 }
 
-    // Fonction utilitaire pour générer une couleur à partir d'un numéro
+    // couleur à partir d'un numéro
     function getColorFromNumero(numero) {
       const hash = Array.from(numero).reduce((acc, char) => acc + char.charCodeAt(0), 0);
       const r = (hash * 115) % 256;
@@ -673,7 +577,6 @@ async function manualSearch() {
 
   </script>
 
-  <!-- Chargement asynchrone de l'API Google Maps, avec callback vers initMap -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBfGs1gnWhKjQvgeebgoMtptzwjMwBKwh0&libraries=places,marker&callback=initMap" async defer></script>
 </body>
 </html>
