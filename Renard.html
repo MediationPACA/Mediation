@@ -116,9 +116,10 @@
     </p>
     <p class="phone">0483650279</p>
   </div>
-  <p class="page">Données naturalistes Chiroptères</p>
+  <p class="page">Données naturalistes Reanard  </p>
 
-  <button class= "sites" onclick="window.location.href='Renard.html'"> Renard </button>
+
+  <button class= "sites" onclick="window.location.href='mediation.html'"> Chiro </button>
 
   <div id="map"></div>
 
@@ -130,7 +131,6 @@
     <button id="search-button">Rechercher</button>
     <input type="text" id="manualSearchInput" placeholder="Rechercher une ville ou une adresse">
 <button id="manualSearchButton">Rechercher</button>
- <p class="link"><a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=1699587869&single=true&output=csv" target="_blank">CHIRO csv</a></p>
     <div id="legend">
       </br> <strong>Légende :</strong>
       <ul id="legend-list"></ul>
@@ -159,7 +159,7 @@
     let urgentMode = false;
     
 
-    const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=1699587869&single=true&output=csv';
+    const csvURL1 = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSgn7Ua3wOiYoVnr2Tl-dSiBucRC_w0mUEJdMmdmeySAEiEBkBGyLmjuXcCSkR_AYzt_r92du7FfWHk/pub?gid=653750889&single=true&output=csv';
     const csvURL2 = '';
     let currentCSV = csvURL1;
 
@@ -216,11 +216,10 @@
           status: row[13]?.trim() || '',
           seil: row[0]?.trim() || '',
           Esp: row[14]?.trim() || '',
-          info: row[6]?.trim() ||'',
+          info: (row[12]?.trim() ? row[12].trim() : row[3]?.trim()) || '',
           Emoj: row[15]?.trim() || '',
           Emoj2: row[11]?.trim() || '',
           jourdispo: row[15]?.trim() ||''
-          
         };
       
       }
@@ -421,7 +420,7 @@
                     const marker = new google.maps.Marker({
                       position: finalPosition,
                       map: map,
-                      title: `${name} ${espece} \n${jourdispo}\n${info} ${Emoj} ${Emoj2}`,
+                      title: `${name} ${espece} ${Numero} \n${jourdispo}\n${info} ${Emoj} ${Emoj2}`,
                       icon: icon,
                       zIndex: 10 
                     });
@@ -452,14 +451,14 @@ if (csvUrl === csvURL1 && status.trim().toLowerCase() === "intervention") {
                     };
                     marker.customIndex = markerCount;
                     marker.addListener("click", () => {
-                      infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;">${name} (${espece} <br>${jourdispo}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
+                      infoWindow.setContent(`<div style="font-size:20px; font-weight:bold; color:#333;"> (${espece} <br>${jourdispo}<br>${info}<br>${Emoj} ${Emoj2})</div>`);
                       infoWindow.open(map, marker);
                       
                     });
                     markers.push(marker);
                     let debugLine = "";
                     if (csvUrl === csvURL1) {
-                      debugLine = `${repondu} ---> ${espece} | info : ${info}  | lieu découverte : ${cityName}  | appel : ${seil}`;
+                      debugLine = `${repondu} ---> ${espece} | lieu découverte : ${cityName}  | appel : ${seil}`;
                     } 
                     debugInfoHTML += `<div id="debug-line-${markerCount}" data-index="${markerCount}">${debugLine}</div>\n`;
                     markerCount++;
